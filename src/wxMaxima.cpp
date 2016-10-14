@@ -2237,6 +2237,7 @@ void wxMaxima::ShowMaximaHelp(wxString keyword)
 void wxMaxima::OnIdle(wxIdleEvent& event)
 {
 
+  std::cerr<<"wxMaxima::OnIdle\n";
   // Incremental search is done from the idle task. This means that we don't forcefully
   // need to do a new search on every character that is entered into the search box.
   if(m_console->m_findDialog != NULL)
@@ -2263,12 +2264,12 @@ void wxMaxima::OnIdle(wxIdleEvent& event)
   bool screenHasChanged = m_console->RedrawRequested();
   m_console->RedrawIfRequested();
 
-  ResetTitle(m_console->IsSaved());
-
   // If nothing which is visible has changed nothing that would cause us to need
   // update the menus and toolbars has.
   if(screenHasChanged)
   {
+    std::cerr<<"wxMaxima::OnIdle: Screen has changed.\n";
+    ResetTitle(m_console->IsSaved());
     wxUpdateUIEvent dummy;
     UpdateMenus(dummy);
     UpdateToolBar(dummy);
@@ -2279,9 +2280,9 @@ void wxMaxima::OnIdle(wxIdleEvent& event)
   // contents sooner or later we should do so now that wxMaxima is idle.
   if(m_console->m_scheduleUpdateToc)
   {
+    m_console->m_scheduleUpdateToc = false;
     if(m_console->m_structure)
     {
-      m_console->m_scheduleUpdateToc = false;
       GroupCell *cursorPos;
       cursorPos = m_console->GetHCaret();
       if((!m_console->HCaretActive())&&(cursorPos == m_console->GetLastCell()))
@@ -2721,6 +2722,7 @@ void wxMaxima::ReadStdErr()
 
 void wxMaxima::OnTimerEvent(wxTimerEvent& event)
 {
+  std::cerr<<"wxMaxima::OnTimer\n";
   switch (event.GetId()) {
   case MAXIMA_STDOUT_POLL_ID:
     ReadStdErr();

@@ -1092,6 +1092,8 @@ void MathCtrl::OnMouseRightDown(wxMouseEvent& event)
   if (popupMenu->GetMenuItemCount() > 0 )
     PopupMenu(popupMenu);
   delete popupMenu;
+
+  RequestRedraw();
 }
 
 
@@ -3530,6 +3532,7 @@ void MathCtrl::StepAnimation(int change)
 }
 
 void MathCtrl::OnTimer(wxTimerEvent& event) {
+  std::cerr<<"MathCtrl::OnTimer\n";
   switch (event.GetId()) {
   case TIMER_ID:
   {
