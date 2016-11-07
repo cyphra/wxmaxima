@@ -32,6 +32,10 @@ DiffCell::DiffCell() : MathCell()
 {
   m_baseCell = NULL;
   m_diffCell = NULL;
+  m_open = new TextCell(wxT("("));
+//  m_open -> DontEscapeOpeningParenthesis();
+  m_close = new TextCell(wxT(")"));
+  m_last = NULL;
 }
 
 DiffCell::~DiffCell()
@@ -40,6 +44,10 @@ DiffCell::~DiffCell()
     delete m_baseCell;
   if (m_diffCell != NULL)
     delete m_diffCell;
+  if (m_open != NULL)
+    delete m_open;
+  if (m_close != NULL)
+    delete m_close;
   if (m_next != NULL)
     delete m_next;
 }
@@ -59,6 +67,8 @@ MathCell* DiffCell::Copy()
   CopyData(this, tmp);
   tmp->SetDiff(m_diffCell->CopyList());
   tmp->SetBase(m_baseCell->CopyList());
+  tmp->m_open  = m_open ->CopyList();
+  tmp->m_close = m_close->CopyList();
   tmp->m_isBroken = m_isBroken;
 
   return tmp;
@@ -93,24 +103,48 @@ void DiffCell::SetBase(MathCell *base)
   if (m_baseCell != NULL)
     delete m_baseCell;
   m_baseCell = base;
+  m_last = m_baseCell;
+  if(m_last != NULL)
+    while (m_last->m_next != NULL)
+      m_last = m_last->m_next;
 }
 
 void DiffCell::RecalculateWidths(int fontsize)
 {
-  Configuration *parser = Configuration::Get();
-  double scale = parser->GetScale();
-  m_baseCell->RecalculateWidthsList(fontsize);
-  m_diffCell->RecalculateWidthsList(fontsize);
-  m_width = m_baseCell->GetFullWidth(scale) + m_diffCell->GetFullWidth(scale) + 2*MC_CELL_SKIP;
-  ResetData();
+  if (m_isBroken)
+  {
+    m_baseCell->RecalculateWidthsList(fontsize);
+    m_diffCell->RecalculateWidthsList(fontsize);
+    m_open->RecalculateWidthsList(fontsize);
+    m_close->RecalculateWidthsList(fontsize);
+  }
+  else
+  {
+    Configuration *parser = Configuration::Get();
+    double scale = parser->GetScale();
+    m_baseCell->RecalculateWidthsList(fontsize);
+    m_diffCell->RecalculateWidthsList(fontsize);
+    m_width = m_baseCell->GetFullWidth(scale) + m_diffCell->GetFullWidth(scale) + 2*MC_CELL_SKIP;
+    ResetData();
+  }
 }
 
 void DiffCell::RecalculateHeight(int fontsize)
 {
-  m_baseCell->RecalculateHeightList(fontsize);
-  m_diffCell->RecalculateHeightList(fontsize);
-  m_center = MAX(m_diffCell->GetMaxCenter(), m_baseCell->GetMaxCenter());
-  m_height = m_center + MAX(m_diffCell->GetMaxDrop(), m_baseCell->GetMaxDrop());
+  if (m_isBroken)
+  {
+    m_baseCell->RecalculateHeightList(fontsize);
+    m_diffCell->RecalculateHeightList(fontsize);
+    m_open->RecalculateHeightList(fontsize);
+    m_close->RecalculateHeightList(fontsize);
+  }
+  else
+  {
+    m_baseCell->RecalculateHeightList(fontsize);
+    m_diffCell->RecalculateHeightList(fontsize);
+    m_center = MAX(m_diffCell->GetMaxCenter(), m_baseCell->GetMaxCenter());
+    m_height = m_center + MAX(m_diffCell->GetMaxDrop(), m_baseCell->GetMaxDrop());
+  }
 }
 
 void DiffCell::Draw(wxPoint point, int fontsize)
@@ -134,13 +168,16 @@ wxString DiffCell::ToString()
 {
   if (m_isBroken)
     return wxEmptyString;
-  MathCell* tmp = m_baseCell->m_next;
-  wxString s = wxT("'diff(");
-  if (tmp != NULL)
-    s += tmp->ListToString();
-  s += m_diffCell->ListToString();
-  s += wxT(")");
-  return s;
+  else
+  {
+    MathCell* tmp = m_baseCell->m_next;
+    wxString s = wxT("'diff(");
+    if (tmp != NULL)
+      s += tmp->ListToString();
+    s += m_diffCell->ListToString();
+    s += wxT(")");
+    return s;
+  }
 }
 
 wxString DiffCell::ToTeX()
@@ -200,4 +237,36 @@ void DiffCell::SelectInner(wxRect& rect, MathCell** first, MathCell** last)
     *first = this;
     *last = this;
   }
+}
+
+bool DiffCell::BreakUp()
+{
+  if (!m_isBroken)
+  {
+    m_diffCell -> m_nextToDraw = m_open;
+    m_open     -> m_nextToDraw = m_baseCell;
+    m_baseCell -> m_nextToDraw = m_close;
+    m_open     -> m_nextToDraw = m_diffCell;
+    m_baseCell -> m_nextToDraw = m_open;
+    m_close    -> m_nextToDraw = m_baseCell;
+    wxASSERT_MSG(m_last != NULL,_("Bug: No last cell in an diffCell!"));
+    if(m_last != NULL)
+    {
+      m_last->m_nextToDraw = m_close;
+      m_close->m_previousToDraw = m_last;
+    }
+    m_close->m_nextToDraw = m_nextToDraw;
+    if (m_nextToDraw != NULL)
+      m_nextToDraw->m_previousToDraw = m_close;
+    m_nextToDraw = m_diffCell;
+    return true;
+  }
+  return false;
+}
+
+void DiffCell::Unbreak()
+{
+  if (m_isBroken)
+    m_diffCell->UnbreakList();
+  MathCell::Unbreak();
 }

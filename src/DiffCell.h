@@ -23,6 +23,7 @@
 #define DIFFCELL_H
 
 #include "MathCell.h"
+#include "TextCell.h"
 
 class DiffCell : public MathCell
 {
@@ -42,10 +43,14 @@ public:
   wxString ToMathML();
   wxString ToOMML();
   wxString ToXML();
+  bool BreakUp();
+  void Unbreak();
   void SetParent(MathCell *parent);
 protected:
   MathCell *m_baseCell;
   MathCell *m_diffCell;
+  MathCell *m_open, *m_close;
+  MathCell *m_last;
 };
 
 #endif // DIFFCELL_H
