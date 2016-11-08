@@ -49,7 +49,6 @@ public:
 protected:
   MathCell *m_baseCell;
   MathCell *m_diffCell;
-  MathCell *m_open, *m_close;
   MathCell *m_last;
 };
 
