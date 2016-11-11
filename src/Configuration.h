@@ -28,6 +28,9 @@
 
 #include "Setup.h"
 
+#define MC_MIN_SIZE 10
+#define MAX(a,b) ((a)>(b) ? (a) : (b))
+
 /*! The configuration storage for the current worksheet.
 
   Caching the information here means we don't need to search for the configuration
@@ -136,7 +139,7 @@ public:
     else
       return double(m_defaultFontSize)*88.0*m_zoomFactor;
   }
-  const int GetDefaultFontSize() { return int(m_zoomFactor * double(m_defaultFontSize)); }
+  const int GetDefaultFontSize() { return MAX(MC_MIN_SIZE,int(m_zoomFactor * double(m_defaultFontSize))); }
   const int GetMathFontSize() { return int(m_zoomFactor * double(m_mathFontSize)); }
   const bool GetAutoWrap() { return m_autoWrap;}
   const int GetFontSize(int st)

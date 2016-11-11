@@ -353,7 +353,7 @@ void MathCtrl::OnPaint(wxPaintEvent& event)
 
       tmp->m_currentPoint = point;
       if (tmp->DrawThisCell(point))
-        tmp->Draw(point, MAX(fontsize, MC_MIN_SIZE));
+        tmp->Draw();
       if (tmp->m_next != NULL) {
         point.x = MC_GROUP_LEFT_INDENT;
         point.y += drop + tmp->m_next->GetMaxCenter();
@@ -1146,14 +1146,16 @@ void MathCtrl::OnMouseLeftInGcLeft(wxMouseEvent& event, GroupCell *clickedInGC)
 {
   if ((clickedInGC->HideRect()).Contains(m_down)) // did we hit the hide rectancle
   {
-    if (clickedInGC->IsFoldable()) {
+    if (clickedInGC->IsFoldable())
+    {
       if (event.ShiftDown())
         ToggleFoldAll(clickedInGC);
       else
         ToggleFold(clickedInGC);
       Recalculate(clickedInGC,true);
     }
-    else {
+    else
+    {
       clickedInGC->SwitchHide(); // todo if there's nothin to hide, select as normal
       clickedInGC->ResetSize();
       Recalculate(clickedInGC);
@@ -1171,7 +1173,8 @@ void MathCtrl::OnMouseLeftInGcLeft(wxMouseEvent& event, GroupCell *clickedInGC)
  */
 void MathCtrl::OnMouseLeftInGcCell(wxMouseEvent& event, GroupCell *clickedInGC)
 {
-  if(GCContainsCurrentQuestion(clickedInGC)) {
+  if(GCContainsCurrentQuestion(clickedInGC))
+  {
     // The user clicked at the cell maxima has asked a question in.
     FollowEvaluation(true);
     OpenQuestionCaret();
@@ -5477,7 +5480,7 @@ bool MathCtrl::ExportToWXMX(wxString file,bool markAsSaved)
     name = fsystem->FindFirst(name);
 
     // Todo: Ths file remains as memory leak. But calling delete on it
-    // causes already-freed memory to be overwritten.
+    // causes already-freed memory to be overwritten. Is this a wxWidgets bug?
     wxFSFile *fsfile = fsystem->OpenFile(name);
 
     name = name.Right(name.Length() - 7);
@@ -6665,7 +6668,8 @@ bool MathCtrl::CanUndoInsideCell()
 
 void MathCtrl::UndoInsideCell()
 {
-  if (m_activeCell != NULL) {
+  if (m_activeCell != NULL)
+  {
     m_activeCell->Undo();
     m_activeCell->GetParent()->ResetSize();
     m_activeCell->ResetSize();

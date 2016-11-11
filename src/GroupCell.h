@@ -192,7 +192,7 @@ public:
     Won't work if text has been added to the end of the line instead.
    */
   void RecalculateAppended();
-  void Draw(wxPoint point, int fontsize);
+  void Draw();
   //! Is this list of cells empty?
   bool Empty();
   //! Does this tree contain the cell "cell"?

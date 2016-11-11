@@ -36,6 +36,7 @@ TextCell::TextCell() : MathCell()
   m_fontSize = -1;
   m_highlight = false;
   m_altJs = m_alt = false;
+  m_dontEscapeOpeningParenthesis = false;
   m_height = -1;
   m_labelWidth = -1;
   m_labelHeight = -1;
@@ -47,20 +48,8 @@ TextCell::TextCell() : MathCell()
 
 TextCell::TextCell(wxString text) : MathCell()
 {
-  m_height = -1;
-  m_labelWidth = -1;
-  m_labelHeight = -1;
-  m_realCenter = m_center = -1;
-  m_fontSize = 12;
-  m_fontSizeLabel = 12;
-  m_text = text;
-  m_text.Replace(wxT("\n"), wxEmptyString);
-  m_text.Replace(wxT("-->"),wxT("\x2794"));
-  m_text.Replace(wxT("->"),wxT("\x2192"));
-  m_text.Replace(wxT("\x2212>"),wxT("\x2192"));
-  m_highlight = false;
-  m_altJs = m_alt = false;
-  m_dontEscapeOpeningParenthesis = false;
+  TextCell();
+  SetValue(text);
 }
 
 TextCell::~TextCell()
@@ -72,7 +61,8 @@ TextCell::~TextCell()
 void TextCell::SetValue(const wxString &text)
 {
   m_text = text;
-  m_width = -1;
+  // Invalidate the size information
+  m_height = m_width;
   m_text.Replace(wxT("\n"), wxEmptyString);
   m_text.Replace(wxT("-->"),wxT("\x2794"));
   m_text.Replace(wxT("->"),wxT("\x2192"));
@@ -115,8 +105,8 @@ void TextCell::RecalculateWidths(int fontsize)
 {
   Configuration *parser = Configuration::Get();
   SetAltText();
-
-  if (m_height == -1 || m_width == -1 || parser->ForceUpdate())
+    
+  if (m_height < 0 || m_width < 0 || parser->ForceUpdate())
   {
     wxDC& dc = parser->GetDC();
     double scale = parser->GetScale();

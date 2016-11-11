@@ -44,7 +44,6 @@
 
 #if defined __WXMAC__
  #define MC_EXP_INDENT 2
- #define MC_MIN_SIZE 10
  #define MC_MAX_SIZE 36
 #else
  #define MC_EXP_INDENT 4
@@ -105,6 +104,10 @@ enum {
 
   \attention Derived classes must test if m_next equals NULL and if it doesn't
   they have to delete() it.
+
+  \todo We could make the logic that tests how big text is smarter so it will
+  recalculate text widths and heights only if the text, the font or the font size
+  has changed.
  */
 class MathCell
 {
@@ -201,20 +204,12 @@ public:
 
   /*! Draw this cell
 
-    \param point The x and y position this cell is drawn at
-    \param fontsize The font size that is to be used
-    \param all
-     - true: the whole list of cells has to be drawn starting with this one
-     - false: only this cell has to be drawn
    */
   virtual void Draw(wxPoint point, int fontsize);
   /*! Draw this list of cells
 
     \param point The x and y position this cell is drawn at
     \param fontsize The font size that is to be used
-    \param all
-     - true: the whole list of cells has to be drawn starting with this one
-     - false: only this cell has to be drawn
    */
   void DrawList(wxPoint point, int fontsize);
   /*! Draw a rectangle that marks this cell or this list of cells as selected
@@ -225,6 +220,7 @@ public:
      \param dc Where to draw the box.
   */
   virtual void DrawBoundingBox(wxDC& dc, bool all = false);
+  //! Is this cell in the region that is to be redrawn?
   bool DrawThisCell(wxPoint point);
 
   /*! Insert (or remove) a forced linebreak at the beginning of this cell.
