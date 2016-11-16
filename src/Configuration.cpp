@@ -69,6 +69,38 @@ Configuration::Configuration(wxDC& dc, double scale) : m_dc(&dc)
 void Configuration::ReadConfig()
 {
   wxConfig *config = (wxConfig *)wxConfig::Get();
+
+  m_toolbarOpenVisible = true;
+  config->Read(wxT("toolbarOpenVisible"),&m_toolbarOpenVisible);
+  m_toolbarSaveVisible = true;
+  config->Read(wxT("toolbarSaveVisible"),&m_toolbarSaveVisible);
+  m_toolbarPrintVisible = true;
+  config->Read(wxT("toolbarPrintVisible"),&m_toolbarPrintVisible);
+  m_toolbarConfigureVisible = true;
+  config->Read(wxT("toolbarConfigureVisible"),&m_toolbarConfigureVisible);
+  m_toolbarCutVisible = true;
+  config->Read(wxT("toolbarCutVisible"),&m_toolbarCutVisible);
+  m_toolbarCopyVisible = true;
+  config->Read(wxT("toolbarCopyVisible"),&m_toolbarCopyVisible);
+  m_toolbarPasteVisible = true;
+  config->Read(wxT("toolbarPasteVisible"),&m_toolbarPasteVisible);
+  m_toolbarSelectAllVisible = true;
+  config->Read(wxT("toolbarSelectAllVisible"),&m_toolbarSelectAllVisible);
+  m_toolbarFindVisible = true;
+  config->Read(wxT("toolbarFindVisible"),&m_toolbarFindVisible);
+  m_toolbarStopVisible = true;
+  config->Read(wxT("toolbarStopVisible"),&m_toolbarStopVisible);
+  m_toolbarInterruptVisible = true;
+  config->Read(wxT("toolbarInterruptVisible"),&m_toolbarInterruptVisible);
+  m_toolbarSunVisible = true;
+  config->Read(wxT("toolbarSunVisible"),&m_toolbarSunVisible);
+  m_toolbarTillHereVisible = true;
+  config->Read(wxT("toolbarTillHereVisible"),&m_toolbarTillHereVisible);
+  m_toolbarPlayVisible = true;
+  config->Read(wxT("toolbarPlayVisible"),&m_toolbarPlayVisible);
+  m_toolbarHideCodecells = true;
+  config->Read(wxT("toolbarHideCodecellsVisible"),&m_toolbarHideCodecells);
+
   m_autoWrap = true;
   config->Read(wxT("autoWrap"), &m_autoWrap);
 

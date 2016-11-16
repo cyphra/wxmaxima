@@ -52,6 +52,7 @@ class ToolBar
   wxImage GetImage(wxString img);
 #endif
   ToolBar(wxToolBar *tbar);
+  void UpdateVisible();
   virtual ~ToolBar();
   //! Show that user input is needed for maxima to continue
   void ShowUserInputBitmap() {

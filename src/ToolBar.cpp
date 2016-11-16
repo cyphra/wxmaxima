@@ -70,6 +70,25 @@ ToolBar::~ToolBar()
   m_plotSlider = NULL;
 }
 
+void ToolBar::UpdateVisible()
+{
+  bool m_toolbarOpenVisible;
+  bool m_toolbarSaveVisible;
+  bool m_toolbarPrintVisible;
+  bool m_toolbarConfigureVisible;
+  bool m_toolbarCutVisible;
+  bool m_toolbarCopyVisible;
+  bool m_toolbarPasteVisible;
+  bool m_toolbarSelectAllVisible;
+  bool m_toolbarFindVisible;
+  bool m_toolbarStopVisible;
+  bool m_toolbarInterruptVisible;
+  bool m_toolbarSunVisible;
+  bool m_toolbarTillHereVisible;
+  bool m_toolbarPlayVisible;
+  bool m_toolbarHideCodecells;
+}
+
 void ToolBar::UpdateSlider(SlideShow *cell)
 {
   int slideShowDisplayedIndex = cell->GetDisplayedIndex();

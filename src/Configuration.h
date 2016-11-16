@@ -23,6 +23,7 @@
 
 #include <wx/wx.h>
 #include <wx/fontenum.h>
+#include <wx/config.h>
 
 #include "TextStyle.h"
 
@@ -114,6 +115,52 @@ public:
         return 4 + GetCursorWidth();
     }
 
+  bool ToolbarOpenVisible(){return m_toolbarOpenVisible;}
+  void ToolbarOpenVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarOpenVisible"),m_toolbarOpenVisible = visible);}
+  bool ToolbarSaveVisible(){return m_toolbarSaveVisible;}
+  void ToolbarSaveVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarSaveVisible"),m_toolbarSaveVisible = visible);}
+  bool ToolbarPrintVisible(){return m_toolbarPrintVisible;}
+  void ToolbarPrintVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarPrintVisible"),m_toolbarPrintVisible = visible);}
+  bool ToolbarConfigureVisible(){return m_toolbarConfigureVisible;}
+  void ToolbarConfigureVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarConfigureVisible"),m_toolbarConfigureVisible = visible);}
+  bool ToolbarCutVisible(){return m_toolbarCutVisible;}
+  void ToolbarCutVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarCutVisible"),m_toolbarCutVisible = visible);}
+  bool ToolbarCopyVisible(){return m_toolbarCopyVisible;}
+  void ToolbarCopyVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarCopyVisible"),m_toolbarCopyVisible = visible);}
+  bool ToolbarPasteVisible(){return m_toolbarPasteVisible;}
+  void ToolbarPasteVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarPasteVisible"),m_toolbarPasteVisible = visible);}
+  bool ToolbarSelectAllVisible(){return m_toolbarSelectAllVisible;}
+  void ToolbarSelectAllVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarSelectAllVisible"),m_toolbarSelectAllVisible = visible);}
+  bool ToolbarFindVisible(){return m_toolbarFindVisible;}
+  void ToolbarFindVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarFindVisible"),m_toolbarFindVisible = visible);}
+  bool ToolbarStopVisible(){return m_toolbarStopVisible;}
+  void ToolbarStopVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarStopVisible"),m_toolbarStopVisible = visible);}
+  bool ToolbarInterruptVisible(){return m_toolbarInterruptVisible;}
+  void ToolbarInterruptVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarInterruptVisible"),m_toolbarInterruptVisible = visible);}
+  bool ToolbarSunVisible(){return m_toolbarSunVisible;}
+  void ToolbarSunVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarSunVisible"),m_toolbarSunVisible = visible);}
+  bool ToolbarTillHereVisible(){return m_toolbarTillHereVisible;}
+  void ToolbarTillHereVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarTillHereVisible"),m_toolbarTillHereVisible = visible);}
+  bool ToolbarPlayVisible(){return m_toolbarPlayVisible;}
+  void ToolbarPlayVisible(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarPlayVisible"),m_toolbarPlayVisible = visible);}
+  bool ToolbarHideCodecells(){return m_toolbarHideCodecells;}
+  void ToolbarHideCodecells(bool visible)
+    {wxConfig::Get()->Write(wxT("toolbarHideCodecells"),m_toolbarHideCodecells = visible);}
+  
   //! The vertical space between GroupCells
   int GetGroupSkip()
     {
@@ -163,6 +210,23 @@ public:
   //! Returns a pointer to the instance of Configuration that exists
   static Configuration *Get() {return m_activeConfiguration;}
 private:
+
+  bool m_toolbarOpenVisible;
+  bool m_toolbarSaveVisible;
+  bool m_toolbarPrintVisible;
+  bool m_toolbarConfigureVisible;
+  bool m_toolbarCutVisible;
+  bool m_toolbarCopyVisible;
+  bool m_toolbarPasteVisible;
+  bool m_toolbarSelectAllVisible;
+  bool m_toolbarFindVisible;
+  bool m_toolbarStopVisible;
+  bool m_toolbarInterruptVisible;
+  bool m_toolbarSunVisible;
+  bool m_toolbarTillHereVisible;
+  bool m_toolbarPlayVisible;
+  bool m_toolbarHideCodecells;
+
   //! Automatically wrap long lines?
   bool m_autoWrap;
   //! Do we want to automatically close parenthesis?

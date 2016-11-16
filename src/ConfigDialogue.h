@@ -178,6 +178,23 @@ private:
 
   // end wxGlade
 protected:
+  wxCheckBox *m_toolbarOpenVisible;
+  wxCheckBox *m_toolbarSaveVisible;
+  wxCheckBox *m_toolbarPrintVisible;
+  wxCheckBox *m_toolbarConfigureVisible;
+  wxCheckBox *m_toolbarCutVisible;
+  wxCheckBox *m_toolbarCopyVisible;
+  wxCheckBox *m_toolbarPasteVisible;
+  wxCheckBox *m_toolbarSelectAllVisible;
+  wxCheckBox *m_toolbarFindVisible;
+  wxCheckBox *m_toolbarStopVisible;
+  wxCheckBox *m_toolbarInterruptVisible;
+  wxCheckBox *m_toolbarSunVisible;
+  wxCheckBox *m_toolbarTillHereVisible;
+  wxCheckBox *m_toolbarPlayVisible;
+  wxCheckBox *m_toolbarHideCodecells;
+
+
   void OnTabChange(wxBookCtrlEvent& event);
   // begin wxGlade: ConfigDialogue::attributes
   wxTextCtrl* m_maximaProgram;

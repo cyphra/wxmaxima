@@ -656,52 +656,52 @@ wxPanel* ConfigDialogue::CreateToolbarPanel()
 {
   wxPanel *panel = new wxPanel(m_notebook, -1);
   Configuration *config = Configuration::Get();
-  wxFlexGridSizer* grid_sizer = new wxFlexGridSizer(12, 1);
+  wxFlexGridSizer* grid_sizer = new wxFlexGridSizer(12, 1, 1);
 
   m_toolbarOpenVisible = new wxCheckBox(panel, -1, _("Open document"));
-  m_toolbarOpenVisible->SetValue(config->GetToolbarOpenVisible());
+  m_toolbarOpenVisible->SetValue(config->ToolbarOpenVisible());
   grid_sizer->Add(m_toolbarOpenVisible, 0, wxALL, 5);
   m_toolbarSaveVisible = new wxCheckBox(panel, -1, _("Save document"));
-  m_toolbarSaveVisible->SetValue(config->GetToolbarSaveVisible());
+  m_toolbarSaveVisible->SetValue(config->ToolbarSaveVisible());
   grid_sizer->Add(m_toolbarSaveVisible, 0, wxALL, 5);
   m_toolbarPrintVisible = new wxCheckBox(panel, -1, _("Print document"));
-  m_toolbarPrintVisible->SetValue(config->GetToolbarPrintVisible());
+  m_toolbarPrintVisible->SetValue(config->ToolbarPrintVisible());
   grid_sizer->Add(m_toolbarPrintVisible, 0, wxALL, 5);
   m_toolbarConfigureVisible = new wxCheckBox(panel, -1, _("Configure wxMaxima"));
-  m_toolbarConfigureVisible->SetValue(config->GetToolbarConfigureVisible());
+  m_toolbarConfigureVisible->SetValue(config->ToolbarConfigureVisible());
   grid_sizer->Add(m_toolbarConfigureVisible, 0, wxALL, 5);
   m_toolbarCutVisible = new wxCheckBox(panel, -1, _("Cut selection"));
-  m_toolbarCutVisible->SetValue(config->GetToolbarCutVisible());
+  m_toolbarCutVisible->SetValue(config->ToolbarCutVisible());
   grid_sizer->Add(m_toolbarCutVisible, 0, wxALL, 5);
   m_toolbarCopyVisible = new wxCheckBox(panel, -1, _("Copy selection"));
-  m_toolbarCopyVisible->SetValue(config->GetToolbarCopyVisible());
+  m_toolbarCopyVisible->SetValue(config->ToolbarCopyVisible());
   grid_sizer->Add(m_toolbarCopyVisible, 0, wxALL, 5);
   m_toolbarPasteVisible = new wxCheckBox(panel, -1, _("Paste from clipboard"));
-  m_toolbarPasteVisible->SetValue(config->GetToolbarPasteVisible());
+  m_toolbarPasteVisible->SetValue(config->ToolbarPasteVisible());
   grid_sizer->Add(m_toolbarPasteVisible, 0, wxALL, 5);
   m_toolbarSelectAllVisible = new wxCheckBox(panel, -1, _("Select all"));
-  m_toolbarSelectAllVisible->SetValue(config->GetToolbarSelectAllVisible());
+  m_toolbarSelectAllVisible->SetValue(config->ToolbarSelectAllVisible());
   grid_sizer->Add(m_toolbarSelectAllVisible, 0, wxALL, 5);
   m_toolbarFindVisible = new wxCheckBox(panel, -1, _("Find and replace"));
-  m_toolbarFindVisible->SetValue(config->GetToolbarFindVisible());
+  m_toolbarFindVisible->SetValue(config->ToolbarFindVisible());
   grid_sizer->Add(m_toolbarFindVisible, 0, wxALL, 5);
   m_toolbarStopVisible = new wxCheckBox(panel, -1, _("Restart Maxima"));
-  m_toolbarStopVisible->SetValue(config->GetToolbarStopVisible());
+  m_toolbarStopVisible->SetValue(config->ToolbarStopVisible());
   grid_sizer->Add(m_toolbarStopVisible, 0, wxALL, 5);
   m_toolbarInterruptVisible = new wxCheckBox(panel, -1, _("Interrupt current calculation"));
-  m_toolbarInterruptVisible->SetValue(config->GetToolbarInterruptVisible());
+  m_toolbarInterruptVisible->SetValue(config->ToolbarInterruptVisible());
   grid_sizer->Add(m_toolbarInterruptVisible, 0, wxALL, 5);
   m_toolbarSunVisible = new wxCheckBox(panel, -1, _("Return to Evaluation"));
-  m_toolbarSunVisible->SetValue(config->GetToolbarSunVisible());
+  m_toolbarSunVisible->SetValue(config->ToolbarSunVisible());
   grid_sizer->Add(m_toolbarSunVisible, 0, wxALL, 5);
   m_toolbarTillHereVisible = new wxCheckBox(panel, -1, _("Evaluate to cursor"));
-  m_toolbarTillHereVisible->SetValue(config->GetToolbarTillHereVisible());
+  m_toolbarTillHereVisible->SetValue(config->ToolbarTillHereVisible());
   grid_sizer->Add(m_toolbarTillHereVisible, 0, wxALL, 5);
   m_toolbarPlayVisible = new wxCheckBox(panel, -1, _("Start or Stop the Animation"));
-  m_toolbarPlayVisible->SetValue(config->GetToolbarPlayVisible());
+  m_toolbarPlayVisible->SetValue(config->ToolbarPlayVisible());
   grid_sizer->Add(m_toolbarPlayVisible, 0, wxALL, 5);
   m_toolbarHideCodecells = new wxCheckBox(panel, -1, _("Show and Hide all Code Cells"));
-  m_toolbarHideCodecells->SetValue(config->GetToolbarHideCodecells());
+  m_toolbarHideCodecells->SetValue(config->ToolbarHideCodecells());
   grid_sizer->Add(m_toolbarHideCodecells, 0, wxALL, 5);
 
   panel->SetSizerAndFit(grid_sizer);
@@ -946,6 +946,23 @@ void ConfigDialogue::WriteSettings()
   config->Write(wxT("texPreamble"), m_texPreamble->GetValue());
   config->Write(wxT("autoSaveInterval"), m_autoSaveInterval->GetValue());
   config->Write(wxT("documentclass"), m_documentclass->GetValue());
+  
+  config->Write(wxT("toolbarOpenVisible"),m_toolbarOpenVisible->GetValue());
+  config->Write(wxT("toolbarSaveVisible"),m_toolbarSaveVisible->GetValue());
+  config->Write(wxT("toolbarPrintVisible"),m_toolbarPrintVisible->GetValue());
+  config->Write(wxT("toolbarConfigureVisible"),m_toolbarConfigureVisible->GetValue());
+  config->Write(wxT("toolbarCutVisible"),m_toolbarCutVisible->GetValue());
+  config->Write(wxT("toolbarCopyVisible"),m_toolbarCopyVisible->GetValue());
+  config->Write(wxT("toolbarPasteVisible"),m_toolbarPasteVisible->GetValue());
+  config->Write(wxT("toolbarSelectAllVisible"),m_toolbarSelectAllVisible->GetValue());
+  config->Write(wxT("toolbarFindVisible"),m_toolbarFindVisible->GetValue());
+  config->Write(wxT("toolbarStopVisible"),m_toolbarStopVisible->GetValue());
+  config->Write(wxT("toolbarInterruptVisible"),m_toolbarInterruptVisible->GetValue());
+  config->Write(wxT("toolbarSunVisible"),m_toolbarSunVisible->GetValue());
+  config->Write(wxT("toolbarTillHereVisible"),m_toolbarTillHereVisible->GetValue());
+  config->Write(wxT("toolbarPlayVisible"),m_toolbarPlayVisible->GetValue());
+  config->Write(wxT("toolbarHideCodecells"),m_toolbarHideCodecells->GetValue());
+
   if (m_saveSize->GetValue())
     config->Write(wxT("pos-restore"), 1);
   else
