@@ -133,6 +133,7 @@ ConfigDialogue::ConfigDialogue(wxWindow* parent)
   m_imageList->Add(GetImage(wxT("styles.png")));
   m_imageList->Add(GetImage(wxT("Document-export.png")));
   m_imageList->Add(GetImage(wxT("options.png")));
+  m_imageList->Add(GetImage(wxT("gtk-paste.png")));
 
   Create(parent, wxID_ANY, _("wxMaxima configuration"),
          wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE);
@@ -146,6 +147,7 @@ ConfigDialogue::ConfigDialogue(wxWindow* parent)
   m_notebook->AddPage(CreateStylePanel(), _("Style"), false, 2);
   m_notebook->AddPage(CreateExportPanel(), _("Export"), false, 3);
   m_notebook->AddPage(CreateOptionsPanel(), _("Options"), false, 4);
+  m_notebook->AddPage(CreateToolbarPanel(), _("Toolbar"), false, 5);
 #ifndef __WXMAC__
   CreateButtons(wxOK | wxCANCEL);
 #endif
@@ -646,6 +648,63 @@ wxPanel* ConfigDialogue::CreateOptionsPanel()
   vsizer->AddGrowableRow(10);
   panel->SetSizer(vsizer);
   vsizer->Fit(panel);
+
+  return panel;
+}
+
+wxPanel* ConfigDialogue::CreateToolbarPanel()
+{
+  wxPanel *panel = new wxPanel(m_notebook, -1);
+  Configuration *config = Configuration::Get();
+  wxFlexGridSizer* grid_sizer = new wxFlexGridSizer(12, 1);
+
+  m_toolbarOpenVisible = new wxCheckBox(panel, -1, _("Open document"));
+  m_toolbarOpenVisible->SetValue(config->GetToolbarOpenVisible());
+  grid_sizer->Add(m_toolbarOpenVisible, 0, wxALL, 5);
+  m_toolbarSaveVisible = new wxCheckBox(panel, -1, _("Save document"));
+  m_toolbarSaveVisible->SetValue(config->GetToolbarSaveVisible());
+  grid_sizer->Add(m_toolbarSaveVisible, 0, wxALL, 5);
+  m_toolbarPrintVisible = new wxCheckBox(panel, -1, _("Print document"));
+  m_toolbarPrintVisible->SetValue(config->GetToolbarPrintVisible());
+  grid_sizer->Add(m_toolbarPrintVisible, 0, wxALL, 5);
+  m_toolbarConfigureVisible = new wxCheckBox(panel, -1, _("Configure wxMaxima"));
+  m_toolbarConfigureVisible->SetValue(config->GetToolbarConfigureVisible());
+  grid_sizer->Add(m_toolbarConfigureVisible, 0, wxALL, 5);
+  m_toolbarCutVisible = new wxCheckBox(panel, -1, _("Cut selection"));
+  m_toolbarCutVisible->SetValue(config->GetToolbarCutVisible());
+  grid_sizer->Add(m_toolbarCutVisible, 0, wxALL, 5);
+  m_toolbarCopyVisible = new wxCheckBox(panel, -1, _("Copy selection"));
+  m_toolbarCopyVisible->SetValue(config->GetToolbarCopyVisible());
+  grid_sizer->Add(m_toolbarCopyVisible, 0, wxALL, 5);
+  m_toolbarPasteVisible = new wxCheckBox(panel, -1, _("Paste from clipboard"));
+  m_toolbarPasteVisible->SetValue(config->GetToolbarPasteVisible());
+  grid_sizer->Add(m_toolbarPasteVisible, 0, wxALL, 5);
+  m_toolbarSelectAllVisible = new wxCheckBox(panel, -1, _("Select all"));
+  m_toolbarSelectAllVisible->SetValue(config->GetToolbarSelectAllVisible());
+  grid_sizer->Add(m_toolbarSelectAllVisible, 0, wxALL, 5);
+  m_toolbarFindVisible = new wxCheckBox(panel, -1, _("Find and replace"));
+  m_toolbarFindVisible->SetValue(config->GetToolbarFindVisible());
+  grid_sizer->Add(m_toolbarFindVisible, 0, wxALL, 5);
+  m_toolbarStopVisible = new wxCheckBox(panel, -1, _("Restart Maxima"));
+  m_toolbarStopVisible->SetValue(config->GetToolbarStopVisible());
+  grid_sizer->Add(m_toolbarStopVisible, 0, wxALL, 5);
+  m_toolbarInterruptVisible = new wxCheckBox(panel, -1, _("Interrupt current calculation"));
+  m_toolbarInterruptVisible->SetValue(config->GetToolbarInterruptVisible());
+  grid_sizer->Add(m_toolbarInterruptVisible, 0, wxALL, 5);
+  m_toolbarSunVisible = new wxCheckBox(panel, -1, _("Return to Evaluation"));
+  m_toolbarSunVisible->SetValue(config->GetToolbarSunVisible());
+  grid_sizer->Add(m_toolbarSunVisible, 0, wxALL, 5);
+  m_toolbarTillHereVisible = new wxCheckBox(panel, -1, _("Evaluate to cursor"));
+  m_toolbarTillHereVisible->SetValue(config->GetToolbarTillHereVisible());
+  grid_sizer->Add(m_toolbarTillHereVisible, 0, wxALL, 5);
+  m_toolbarPlayVisible = new wxCheckBox(panel, -1, _("Start or Stop the Animation"));
+  m_toolbarPlayVisible->SetValue(config->GetToolbarPlayVisible());
+  grid_sizer->Add(m_toolbarPlayVisible, 0, wxALL, 5);
+  m_toolbarHideCodecells = new wxCheckBox(panel, -1, _("Show and Hide all Code Cells"));
+  m_toolbarHideCodecells->SetValue(config->GetToolbarHideCodecells());
+  grid_sizer->Add(m_toolbarHideCodecells, 0, wxALL, 5);
+
+  panel->SetSizerAndFit(grid_sizer);
 
   return panel;
 }

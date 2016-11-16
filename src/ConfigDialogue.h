@@ -173,6 +173,9 @@ private:
   wxPanel* CreateStylePanel();
   //! The panel that allows to change maxima-specific configurations.
   wxPanel* CreateMaximaPanel();
+  //! The panel that allows to hide toolbar buttons.
+  wxPanel* CreateToolbarPanel();
+
   // end wxGlade
 protected:
   void OnTabChange(wxBookCtrlEvent& event);
