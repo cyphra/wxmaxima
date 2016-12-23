@@ -26,6 +26,7 @@
  */
 #include <wx/wx.h>
 #include <vector>
+#include <wx/listctrl.h>
 #include "GroupCell.h"
 #include "EditorCell.h"
 
@@ -61,12 +62,15 @@ public:
   void Update(MathCell* tree,GroupCell *pos);
   //! Get the nth Cell in the table of contents.
   MathCell *GetCell(int index);
+protected:
+  void OnSize(wxSizeEvent& event);
+
 private:
   //! The last selected item
   long m_lastSelection;
   //! Update the displayed contents.
   void UpdateDisplay();
-  wxListBox *m_displayedItems;
+  wxListCtrl *m_displayedItems;
   wxTextCtrl *m_regex;
   //! The items we displayed the last time update() was called
   wxArrayString m_items_old;
