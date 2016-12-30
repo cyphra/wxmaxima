@@ -367,6 +367,8 @@ private:
         m_text = text;
         m_style = style;
         m_styleThisText = true;
+        m_indentPixels = 0;
+        m_indentChar = wxEmptyString;
       }
 
     /*! Defines a piece of text with the default style that possibly is indented
@@ -386,6 +388,17 @@ private:
     wxString GetText()
       {
         return m_text;
+      }
+    //! Changes the piece of text kept in this token
+    void SetText(wxString text)
+      {
+        m_text = text;
+      }
+    //! Changes the indentation level of this token
+    void SetIndentation(int indentPixels,wxString indentString = wxEmptyString)
+      {
+        m_indentPixels = indentPixels;
+        m_indentChar   = indentString;
       }
     //! By how many pixels do we need to indent this line due to a bullet list or similar?
     int GetIndentPixels()
@@ -410,6 +423,9 @@ private:
   };
   
   std::vector<StyledText> m_styledText;
+
+  //! Adds soft line breaks to code cells, if needed.
+  void HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth,const wxString &token,int charInCell);
 
   //! How many chars do we need to indent text at the position the caret is currently at?
   int GetIndentDepth(wxString text,int positionOfCaret);

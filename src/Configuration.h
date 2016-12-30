@@ -155,6 +155,15 @@ public:
   const int GetDefaultFontSize() { return int(m_zoomFactor * double(m_defaultFontSize)); }
   const int GetMathFontSize() { return int(m_zoomFactor * double(m_mathFontSize)); }
   const bool GetAutoWrap() { return m_autoWrap;}
+  void SetAutoWrap(bool autoWrap)
+    {
+      wxConfig::Get()->Write(wxT("autoWrap"),m_autoWrap = autoWrap);
+    }
+  const bool GetAutoIndent() { return m_autoIndent;}
+  void SetAutoIndent(bool autoIndent)
+    {
+      wxConfig::Get()->Write(wxT("autoIndent"),m_autoIndent = autoIndent);
+    }
   const int GetFontSize(int st)
   {
     if (st == TS_TEXT || st == TS_SUBSUBSECTION || st == TS_SUBSECTION || st == TS_SECTION || st == TS_TITLE)
@@ -211,6 +220,8 @@ private:
   int m_displayedDigits;
   //! Automatically wrap long lines?
   bool m_autoWrap;
+  //! Automatically indent long lines?
+  bool m_autoIndent;
   //! Do we want to automatically close parenthesis?
   bool m_matchParens;
   //! Do we want to automatically insert new cells conaining a "%" at the end of every command?

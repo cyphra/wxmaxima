@@ -61,6 +61,9 @@ void Configuration::ReadConfig()
   m_autoWrap = true;
   config->Read(wxT("autoWrap"), &m_autoWrap);
 
+  m_autoIndent = true;
+  wxConfig::Get()->Read(wxT("autoIndent"), &m_autoIndent);
+  
   m_changeAsterisk = true;
   config->Read(wxT("changeAsterisk"), &m_changeAsterisk);
 

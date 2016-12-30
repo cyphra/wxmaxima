@@ -234,9 +234,7 @@ void ConfigDialogue::SetProperties()
     exportContainsWXMX = false;
   int exportWithMathJAX = 0;
   bool insertAns;
-  bool autoIndent = true;
   bool cursorJump = true;
-  bool autoWrap   = true;
 
   int labelWidth = 4;
   int undoLimit  = 0;
@@ -298,9 +296,7 @@ void ConfigDialogue::SetProperties()
   config->Read(wxT("saveUntitled"), &saveUntitled);
   config->Read(wxT("openHCaret"), &openHCaret);
   insertAns = Configuration::Get()->GetInsertAns();
-  config->Read(wxT("autoIndent"), &autoIndent);
   config->Read(wxT("cursorJump"), &cursorJump);
-  config->Read(wxT("autoWrap"), &autoWrap);
   config->Read(wxT("labelWidth"), &labelWidth);
   config->Read(wxT("undoLimit"), &undoLimit);
   config->Read(wxT("recentItems"), &recentItems);
@@ -368,9 +364,9 @@ void ConfigDialogue::SetProperties()
   m_saveUntitled->SetValue(saveUntitled);
   m_openHCaret->SetValue(openHCaret);
   m_insertAns->SetValue(insertAns);
-  m_autoIndent->SetValue(autoIndent);
+  m_autoIndent->SetValue(Configuration::Get()->GetAutoIndent());
   m_cursorJump->SetValue(cursorJump);
-  m_autoWrap->SetValue(autoWrap);
+  m_autoWrap->SetValue(Configuration::Get()->GetAutoWrap());
   m_labelWidth->SetValue(labelWidth);
   m_undoLimit->SetValue(undoLimit);
   m_recentItems->SetValue(recentItems);
@@ -855,9 +851,9 @@ void ConfigDialogue::WriteSettings()
   config->Write(wxT("saveUntitled"), m_saveUntitled->GetValue());
   config->Write(wxT("openHCaret"), m_openHCaret->GetValue());
   config->Write(wxT("insertAns"), m_insertAns->GetValue());
-  config->Write(wxT("autoIndent"), m_autoIndent->GetValue());
+  Configuration::Get()->SetAutoIndent(m_autoIndent->GetValue());
   config->Write(wxT("cursorJump"), m_cursorJump->GetValue());
-  config->Write(wxT("autoWrap"), m_autoWrap->GetValue());
+  Configuration::Get()->SetAutoWrap(m_autoWrap->GetValue());
   config->Write(wxT("labelWidth"), m_labelWidth->GetValue());
   config->Write(wxT("undoLimit"), m_undoLimit->GetValue());
   config->Write(wxT("recentItems"), m_recentItems->GetValue());
