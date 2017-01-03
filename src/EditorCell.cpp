@@ -379,7 +379,7 @@ wxString EditorCell::ToXML()
 
 void EditorCell::RecalculateWidths(int fontsize)
 {
-  //! Redo the wrapping of lines for cells that support automatic line wrapping
+  // Redo the line wrapping. TODO: Is this the right place to do this?
   StyleText();
   
   int charWidth;
@@ -3606,17 +3606,21 @@ void EditorCell::StyleText()
         // Extract a line inserting a soft linebreak if necessary
         while(it!=m_text.end())
         {
+          // Handle hard linebreaks or indent a soft linebreak if necessary
           if((*it=='\n')||(i+1 >= m_text.Length()))
           {
+            // Hard line break (or soft line break necessary)
             if(lastSpacePos > 0)
             {
-              // Does the line extend too much to the right to fit on the screen /
-              // to be easy to read?
-              configuration->GetDC().GetTextExtent(m_text.SubString(lastLineStart,i), &width, &height);
+              // How far has the current line to be indented?
               if((!indentPixels.empty())&&(!newLine))
                 indentation = indentPixels.back();
               else
                 indentation = 0;
+
+              // Does the line extend too much to the right to fit on the screen /
+              // to be easy to read?
+              configuration->GetDC().GetTextExtent(m_text.SubString(lastLineStart,i), &width, &height);
               if(width + m_currentPoint.x + indentation >= configuration->GetLineWidth())
               {
                 // We need a line break in front of the last word
@@ -3647,6 +3651,8 @@ void EditorCell::StyleText()
           }
           else
           {
+            // No linebreak
+            
             // Spaces and reaching the end of the text both trigger auto-wrapping
             if((*it == ' ')||(i >= m_text.Length() - 1))
             {
@@ -3798,21 +3804,14 @@ void EditorCell::StyleText()
 
         // Store the indented line in the list of styled text snippets
         m_styledText.push_back(StyledText(line,0,indentChar));
-        
-        // Store the line ending in the list of styled text snippets
-        if (*it == wxT('\n'))
-        {
-          m_styledText.push_back(StyledText(wxT("\n"),0,indentChar));
-          if((lastSpace != NULL) && (indentation != 0))
-            lastSpace -> SetIndentation(indentation);
-          lastSpace = NULL;
-        }
-        else
-        {
-          m_styledText.push_back(StyledText(wxT("\r")));
-          if((lastSpace != NULL) && (indentation != 0))
-            lastSpace -> SetIndentation(indentation);
-          lastSpace = &m_styledText.back(); 
+
+        if(i + 1 < m_text.Length())
+        { 
+          // Store the line ending in the list of styled text snippets
+          if (*it == wxT('\n'))
+            m_styledText.push_back(StyledText(wxT("\n"),0,indentChar));
+          else
+            m_styledText.push_back(StyledText(wxT("\r"),indentation,indentChar));
         }
         
         // Is this a real new line of comment - or did we insert a soft linebreak?
@@ -3824,8 +3823,6 @@ void EditorCell::StyleText()
           it++;
         }
       } // The loop that loops over all lines
-      if((lastSpace != NULL) && (indentation != 0))
-        lastSpace -> SetIndentation(indentation);
     } // Do we want to autowrap lines?
     ResetSize();
   } // Style text, not code?
