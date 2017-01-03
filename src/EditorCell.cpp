@@ -3801,7 +3801,7 @@ void EditorCell::StyleText()
           indentation = indentPixels.back();
         else
           indentation = 0;
-
+        std::cerr<<"prefix="<<indentChar<<", line="<<line<<", indentation="<<indentation<<"\n";
         // Store the indented line in the list of styled text snippets
         m_styledText.push_back(StyledText(line,0,indentChar));
 
