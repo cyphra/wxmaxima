@@ -3805,6 +3805,8 @@ void EditorCell::StyleText()
         // Store the indented line in the list of styled text snippets
         m_styledText.push_back(StyledText(line,0,indentChar));
 
+        // If the cell doesn't end with the last char of this line we have to
+        // add a line ending to the list of styled text snippets
         if(i + 1 < m_text.Length())
         { 
           // Store the line ending in the list of styled text snippets
