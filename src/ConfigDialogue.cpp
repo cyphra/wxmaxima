@@ -225,7 +225,7 @@ void ConfigDialogue::SetProperties()
 
   // The default values for all config items that will be used if there is no saved
   // configuration data for this item.
-  bool match, savePanes = true, UncompressedWXMX=true;
+  bool savePanes = true, UncompressedWXMX=true;
   bool fixedFontTC = true, usejsmath = true, keepPercent = true, abortOnError = true, pollStdOut = false;
   bool enterEvaluates = false, saveUntitled = true,
     openHCaret = false, AnimateLaTeX = true, TeXExponentsAfterSubscript=false,
@@ -233,7 +233,6 @@ void ConfigDialogue::SetProperties()
     wrapLatexMath = true,
     exportContainsWXMX = false;
   int exportWithMathJAX = 0;
-  bool insertAns;
   bool cursorJump = true;
 
   int labelWidth = 4;
@@ -283,7 +282,6 @@ void ConfigDialogue::SetProperties()
   config->Read(wxT("exportContainsWXMX"), &exportContainsWXMX);
   config->Read(wxT("HTMLequationFormat"), &exportWithMathJAX);
   config->Read(wxT("pos-restore"), &rs);
-  match = Configuration::Get()->GetMatchParens();
   config->Read(wxT("showLength"), &showLength);
   config->Read(wxT("autosubscript"), &autosubscript);
   config->Read(wxT("language"), &lang);
@@ -295,7 +293,6 @@ void ConfigDialogue::SetProperties()
   config->Read(wxT("enterEvaluates"), &enterEvaluates);
   config->Read(wxT("saveUntitled"), &saveUntitled);
   config->Read(wxT("openHCaret"), &openHCaret);
-  insertAns = Configuration::Get()->GetInsertAns();
   config->Read(wxT("cursorJump"), &cursorJump);
   config->Read(wxT("labelWidth"), &labelWidth);
   config->Read(wxT("undoLimit"), &undoLimit);
@@ -356,14 +353,14 @@ void ConfigDialogue::SetProperties()
   m_wrapLatexMath->SetValue(wrapLatexMath);
   m_exportContainsWXMX->SetValue(exportContainsWXMX);
   m_exportWithMathJAX->SetSelection(exportWithMathJAX);
-  m_matchParens->SetValue(match);
+  m_matchParens->SetValue(Configuration::Get()->GetMatchParens());
   m_showLength->SetSelection(showLength);
   m_autosubscript->SetSelection(autosubscript);
   m_changeAsterisk->SetValue(Configuration::Get()->GetChangeAsterisk());
   m_enterEvaluates->SetValue(enterEvaluates);
   m_saveUntitled->SetValue(saveUntitled);
   m_openHCaret->SetValue(openHCaret);
-  m_insertAns->SetValue(insertAns);
+  m_insertAns->SetValue(Configuration::Get()->GetInsertAns());
   m_autoIndent->SetValue(Configuration::Get()->GetAutoIndent());
   m_cursorJump->SetValue(cursorJump);
   m_autoWrap->SetValue(Configuration::Get()->GetAutoWrap());

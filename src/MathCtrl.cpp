@@ -1193,6 +1193,7 @@ void MathCtrl::OnMouseLeftInGcCell(wxMouseEvent& event, GroupCell *clickedInGC)
         m_clickType = CLICK_TYPE_INPUT_SELECTION;
         if (editor->GetWidth() == -1)
           Recalculate(clickedInGC,false);
+        ScrollToCaret();
         // Here we tend to get unacceptably long delays before the display is
         // refreshed by the idle loop => Trigger the refresh manually.
         ForceRedraw();
@@ -4115,7 +4116,7 @@ bool MathCtrl::ExportToHTML(wxString file) {
 
   output<<wxT("  <link rel=\"stylesheet\" type=\"text/css\" href=\"")+cssfileName_rel+wxT("\"/>\n");
 
-  wxString version(wxT(VERSION));
+  wxString version(wxT(GITVERSION));
   css<<wxT("\n");
   css<<wxT("/*--------------------------------------------------------\n");
   css<<wxT("  --          Created with wxMaxima version ") + version;
@@ -4950,7 +4951,7 @@ bool MathCtrl::ExportToTeX(wxString file) {
   output<<wxT("\\documentclass[leqno]{") +
     documentclass +
     wxT("}\n\n");
-  output<<wxT("%% Created with wxMaxima " VERSION "\n\n");
+  output<<wxT("%% Created with wxMaxima " GITVERSION "\n\n");
   output<<wxT("\\setlength{\\parskip}{\\medskipamount}\n");
   output<<wxT("\\setlength{\\parindent}{0pt}\n");
   output<<wxT("\\usepackage[utf8]{luainputenc}\n");
@@ -5254,7 +5255,7 @@ bool MathCtrl::ExportToMAC(wxString file)
 
   if (wxm) {
     AddLineToFile(backupfile, wxT("/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/"), false);
-    wxString version(wxT(VERSION));
+    wxString version(wxT(GITVERSION));
     AddLineToFile(backupfile, wxT("/* [ Created with wxMaxima version ") + version + wxT(" ] */"), false);
   }
 
@@ -5381,7 +5382,7 @@ bool MathCtrl::ExportToWXMX(wxString file,bool markAsSaved)
 
   zip.PutNextEntry(wxT("content.xml"));
   output << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-  output << wxT("\n<!--   Created by wxMaxima ") << wxT(VERSION) << wxT("   -->");
+  output << wxT("\n<!--   Created by wxMaxima ") << wxT(GITVERSION) << wxT("   -->");
   output << wxT("\n<!--http://wxmaxima.sourceforge.net-->\n");
 
   // write document
@@ -6162,7 +6163,7 @@ void MathCtrl::SetActiveCell(EditorCell *cell, bool callRefresh)
     Configuration::Get()->ShowCodeCells(true);
     CodeCellVisibilityChanged();
   }
-  if(scrollneeded)
+  if(scrollneeded && (cell != NULL))
     ScrollToCaret();
 }
 
@@ -6198,24 +6199,40 @@ void MathCtrl::ShowPoint(wxPoint point) {
 
   int scrollToX = -1, scrollToY = -1;
 
+  // Get the position [in pixels] the visible portion of the worksheet starts at
   GetViewStart(&view_x, &view_y);
-  GetSize(&width, &height);
-
   view_x *= m_scrollUnit;
   view_y *= m_scrollUnit;
 
-  if ((point.y - 2 < view_y) || (point.y + 2 > view_y + height
-                             - wxSystemSettings::GetMetric(wxSYS_HTHUMB_X) - 20)) {
+  // Get the size of the worksheet window
+  GetSize(&width, &height);
+  // The scrollbars make part of the window size, but not of the
+  // size usable for text
+  height -= wxSystemSettings::GetMetric(wxSYS_VTHUMB_Y);
+  width  -= wxSystemSettings::GetMetric(wxSYS_HTHUMB_X);
+
+  Configuration *configuration=Configuration::Get();
+  int fontsize_px = configuration->GetZoomFactor()*configuration->GetScale()*configuration->GetDefaultFontSize();
+  if (
+    (point.y - fontsize_px < view_y) ||
+    (point.y + fontsize_px > view_y + height - 20)
+    )
+  {
     sc = true;
     scrollToY = point.y - height / 2;
-  } else
+  }
+  else
     scrollToY = view_y;
 
-  if ((point.x - 2 < view_x) || (point.x + 2 > view_x + width
-                             - wxSystemSettings::GetMetric(wxSYS_HTHUMB_X) - 20)) {
+  if (
+    (point.x - fontsize_px < view_x) ||
+    (point.x + 2 > view_x + width - 20)
+    )
+  {
     sc = true;
     scrollToX = point.x - width / 2;
-  } else
+  }
+  else
     scrollToX = view_x;
 
   if (sc)
@@ -6668,7 +6685,8 @@ void MathCtrl::SetHCaret(GroupCell *where, bool callRefresh)
   
   if (callRefresh) // = true default
     RequestRedraw();
-  ScrollToCell(where,false);
+  if(where != NULL)
+    ScrollToCell(where,false);
   
   // Tell the cursor to blink, but to be visible right now.
   m_blinkDisplayCaret = true;
@@ -7176,9 +7194,16 @@ bool MathCtrl::Autocomplete(AutoComplete::autoCompletionType type)
         {
           wxArrayString wordList = tmp->GetEditable()->GetWordList();
 
-          // The current unfinished word is no valid autocompletion.
+          // The current unfinished word is no valid autocompletion, if there is
+          // such a thing.
           if(partial.Length()>0)
-            wordList.Remove(partial);
+          {
+            // Don't remove the current word from autocompletion if it never has been
+            // added (which happens if autocompletion is called when the cursor is
+            // directly followed by the next command without a space or similar inbetween) 
+            if(wordList.Index(partial) != wxNOT_FOUND)
+              wordList.Remove(partial);
+          }
           m_autocomplete.AddWorksheetWords(wordList);
         }
       }
@@ -7358,7 +7383,10 @@ void MathCtrl::OnFollow()
     FollowEvaluation(true);
 
     if(GCContainsCurrentQuestion(GetWorkingGroup()))
+    {
       OpenQuestionCaret();
+      ScrollToCell(GetWorkingGroup(),false);
+    }
     else
     {
       if (GetWorkingGroup()->RevealHidden()) {
