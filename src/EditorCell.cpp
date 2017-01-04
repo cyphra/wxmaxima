@@ -2624,7 +2624,7 @@ void EditorCell::SelectPointText(wxDC& dc, wxPoint& point)
   int indentPixels = 0;
   std::vector<StyledText>::iterator textSnippet;
   for(textSnippet = m_styledText.begin();
-      ((textSnippet!=m_styledText.end())&&(currentLine<lin));++textSnippet)
+      ((textSnippet!=m_styledText.end())&&(currentLine<=lin));++textSnippet)
   {
     if((textSnippet->GetText()=='\n')||(textSnippet->GetText()=='\r'))
     {
@@ -3003,7 +3003,7 @@ int EditorCell::GetLineWidth(wxDC& dc, unsigned int line, int pos)
   int indentPixels = 0;
   std::vector<StyledText>::iterator textSnippet;
   for(textSnippet = m_styledText.begin();
-      ((textSnippet!=m_styledText.end())&&(currentLine<line));++textSnippet)
+      ((textSnippet!=m_styledText.end())&&(currentLine<=line));++textSnippet)
   {
     if((textSnippet->GetText()=='\n')||(textSnippet->GetText()=='\r'))
     {
@@ -3311,7 +3311,6 @@ void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth
     int indentationPixels;
     configuration->GetDC().GetTextExtent(wxT(" "), &charWidth, &height);
     indentationPixels = charWidth*GetIndentDepth(m_text,charInCell);
-    std::cerr<<indentationPixels<<"\n";
     lineWidth = width + indentationPixels;
     lastSpace->SetText('\r');
     lastSpace->SetIndentation(indentationPixels);
@@ -3795,7 +3794,6 @@ void EditorCell::StyleText()
           indentation = indentPixels.back();
         else
           indentation = 0;
-        std::cerr<<"prefix="<<indentChar<<", line="<<line<<", indentation="<<indentation<<"\n";
 
         // Equip the last soft linebreak with indentation.
         if(m_styledText.size() > 0)
