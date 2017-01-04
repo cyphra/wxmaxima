@@ -3402,12 +3402,11 @@ void EditorCell::StyleText()
       if(Ch == wxT(' '))
       {
         if(token.Length()>1)
-        {
           m_styledText.push_back(StyledText(token.Left(token.Length()-1)));
-        }
-        m_styledText.push_back(StyledText(token.Right(1)));
+        m_styledText.push_back(StyledText(wxT(" ")));
         lastSpace = &m_styledText.back();
         lastSpacePos = pos+token.Length()-1;
+        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos,spaceIsIndentation);
         continue;
       }
       else
