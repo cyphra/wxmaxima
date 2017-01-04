@@ -346,6 +346,13 @@ private:
   
   /*! A piece of styled text for syntax highlighting
 
+    A piece of styled text may be
+     - a text line
+     - a command, parenthesis, number, line ending
+     - '\n'
+     - whitespace
+     - '\r' indicating a soft line break optionally equipped with indentation
+       and a character that marks a continued quote or similar 
    */
   class StyledText
   {
@@ -425,7 +432,7 @@ private:
   std::vector<StyledText> m_styledText;
 
   //! Adds soft line breaks to code cells, if needed.
-  void HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth,const wxString &token,int charInCell);
+  void HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth,const wxString &token,int charInCell,wxString &text,size_t &lastSpacePos);
 
   //! How many chars do we need to indent text at the position the caret is currently at?
   int GetIndentDepth(wxString text,int positionOfCaret);

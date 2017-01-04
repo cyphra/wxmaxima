@@ -3293,9 +3293,10 @@ wxArrayString EditorCell::StringToTokens(wxString string)
   return retval;
 }
 
-void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth,const wxString &token,int charInCell)
+void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth,const wxString &token,int charInCell,wxString &text,size_t &lastSpacePos)
 {
-  return;
+  // TODO: Only start adding line breaks after the first non-space character
+  // TODO: Only start adding line breaks after the last space in a row.
   int width,height;
   //  Does the line extend too much to the right to fit on the screen /
   //   // to be easy to read?
@@ -3313,6 +3314,7 @@ void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth
     indentationPixels = charWidth*GetIndentDepth(m_text,charInCell);
     lineWidth = width + indentationPixels;
     lastSpace->SetText('\r');
+    text[lastSpacePos]='\r';
     lastSpace->SetIndentation(indentationPixels);
     lastSpace = NULL;
   }
@@ -3322,12 +3324,16 @@ void EditorCell::StyleText()
 {
   m_wordList.Clear();
   m_styledText.clear();    
+  // Remove all soft line breaks. They will be re-added in the right places
+  // in the next step
+  m_text.Replace(wxT("\r"),wxT(" "));
 
   // Do we need to style code or text?
   if(m_type == MC_TYPE_INPUT)
   {
     // We have to style code
     StyledText *lastSpace = NULL;
+    size_t lastSpacePos = 0;
     wxString textToStyle = m_text;
     if (Configuration::Get()->GetChangeAsterisk())
     {
@@ -3406,7 +3412,7 @@ void EditorCell::StyleText()
             m_styledText.push_back(StyledText(TS_CODE_STRING,token));
           }
         }
-        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos);
+        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos);
         continue;
       }
 
@@ -3440,7 +3446,7 @@ void EditorCell::StyleText()
         else
             m_styledText.push_back(StyledText(TS_CODE_OPERATOR,token));
 
-        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos);
+        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos);
         continue;
       }
 
@@ -3455,7 +3461,7 @@ void EditorCell::StyleText()
           m_styledText.push_back(StyledText(TS_CODE_COMMENT,token));
         }
 
-        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos);
+        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos);
         continue;
       }
 
@@ -3467,7 +3473,7 @@ void EditorCell::StyleText()
         else
           m_styledText.push_back(StyledText(TS_CODE_OPERATOR,token));
 
-        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos);
+        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos);
         continue;
       }
 
@@ -3475,7 +3481,7 @@ void EditorCell::StyleText()
       if(isdigit(token[0])||((token[0]==wxT('.'))&&(nextChar>=wxT('0'))&&(nextChar<=wxT('9'))))
       {
         m_styledText.push_back(StyledText(TS_CODE_NUMBER,token));
-        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos);
+        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos);
         continue;
       }
 
@@ -3527,7 +3533,7 @@ void EditorCell::StyleText()
             m_styledText.push_back(StyledText(TS_CODE_VARIABLE,token));
             m_wordList.Add(token);
           }
-          HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos);
+          HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos);
           continue;
         }
         else
@@ -3535,7 +3541,7 @@ void EditorCell::StyleText()
           m_styledText.push_back(StyledText(TS_CODE_VARIABLE,token));
           m_wordList.Add(token);
           
-          HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos);
+          HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos);
           continue;
         }
       }
@@ -3545,6 +3551,7 @@ void EditorCell::StyleText()
       {
         m_styledText.push_back(StyledText(token));
         lastSpace = &m_styledText.back();
+        lastSpacePos = pos;
         continue;
       }
       
@@ -3557,16 +3564,13 @@ void EditorCell::StyleText()
         continue;
       }
       m_styledText.push_back(StyledText(token));
-      HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos);
+      HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos);
     }
     m_wordList.Sort();
   }
   else
   {  
     // We have to style ordinary text.
-    // Remove all soft line breaks. They will be re-added in the right places
-    // in the next step
-    m_text.Replace(wxT("\r"),wxT(" "));
 
     // Remove all bullets of item lists as we will introduce them again in the next
     // step, as well.
