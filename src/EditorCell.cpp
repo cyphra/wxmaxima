@@ -3294,13 +3294,14 @@ wxArrayString EditorCell::StringToTokens(wxString string)
 }
 
 void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth,const wxString &token,int charInCell,wxString &text,size_t &lastSpacePos,bool spaceIsIndentation)
-{  
+{
   int width,height;
   //  Does the line extend too much to the right to fit on the screen /
   //   // to be easy to read?
   Configuration *configuration = Configuration::Get();
   configuration->GetDC().GetTextExtent(token, &width, &height);
   lineWidth += width;
+  
   if(
     (lineWidth + m_currentPoint.x >= configuration->GetLineWidth()) &&
      (lastSpace!=NULL)&&(lastSpace->GetText()!="\r"))
@@ -3902,7 +3903,6 @@ void EditorCell::SetValue(const wxString &text)
 
   // Style the text.
   StyleText();
-  ResetSize();
   if(m_group != NULL)
     m_group->ResetSize();  
 }
