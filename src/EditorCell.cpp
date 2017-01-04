@@ -3303,8 +3303,7 @@ void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth
   lineWidth += width;
   if(
     (lineWidth + m_currentPoint.x >= configuration->GetLineWidth()) &&
-     (lastSpace!=NULL)&&
-    (lastSpace->GetText()!="\r"))
+     (lastSpace!=NULL)&&(lastSpace->GetText()!="\r"))
   {
     int charWidth;
     int indentationPixels;
@@ -3421,6 +3420,7 @@ void EditorCell::StyleText()
         lineWidth = 0;
         m_styledText.push_back(StyledText(token));
         spaceIsIndentation = true;
+        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos,spaceIsIndentation);
         continue;
       }
 
