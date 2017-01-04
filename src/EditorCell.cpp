@@ -640,6 +640,7 @@ void EditorCell::Draw(wxPoint point1, int fontsize)
     TextStartingpoint.x += SCALE_PX(2, scale);
     wxPoint TextCurrentPoint = TextStartingpoint;
     int lastStyle = -1;
+    int lastIndent = 0;
     for(std::vector<StyledText>::iterator textSnippet = m_styledText.begin();textSnippet!=m_styledText.end();++textSnippet)
     {
       wxString TextToDraw = textSnippet->GetText();
@@ -648,6 +649,8 @@ void EditorCell::Draw(wxPoint point1, int fontsize)
       // A newline is a separate token.
       if((TextToDraw == wxT("\n"))||(TextToDraw == wxT("\r")))
       {
+        if((TextToDraw == wxT("\n")))
+          lastIndent = textSnippet->GetIndentPixels();
         // A newline =>
         // set the point to the beginning of the next line.
         TextCurrentPoint.x = TextStartingpoint.x;
@@ -687,7 +690,7 @@ void EditorCell::Draw(wxPoint point1, int fontsize)
         // Draw a char that shows we continue an indentation - if this is needed.
         if(textSnippet->GetIndentChar() != wxEmptyString)
           dc.DrawText(textSnippet->GetIndentChar(),
-                      TextCurrentPoint.x,
+                      TextStartingpoint.x + lastIndent,
                       TextCurrentPoint.y - m_center);
         
         dc.DrawText(TextToDraw,
@@ -3011,16 +3014,7 @@ int EditorCell::GetLineWidth(wxDC& dc, unsigned int line, int pos)
     
   if (pos == 0)
   {
-    // Code lines are never indented
-    if(m_type == MC_TYPE_INPUT)
-      return 0;
-    else
-    {
-      if(m_styledText.size() > line * 2)
-        return m_styledText[line*2].GetIndentPixels();
-      else
-        return 0;
-    }
+    return indentPixels;
   }
   
   unsigned int i = 0;
@@ -3802,6 +3796,13 @@ void EditorCell::StyleText()
         else
           indentation = 0;
         std::cerr<<"prefix="<<indentChar<<", line="<<line<<", indentation="<<indentation<<"\n";
+
+        // Equip the last soft linebreak with indentation.
+        if(m_styledText.size() > 0)
+        {
+          if(m_styledText.back().GetText() == wxT("\r"))
+            m_styledText.back().SetIndentation(indentation);
+        }
         // Store the indented line in the list of styled text snippets
         m_styledText.push_back(StyledText(line,0,indentChar));
 
@@ -3813,7 +3814,7 @@ void EditorCell::StyleText()
           if (*it == wxT('\n'))
             m_styledText.push_back(StyledText(wxT("\n"),0,indentChar));
           else
-            m_styledText.push_back(StyledText(wxT("\r"),indentation,indentChar));
+            m_styledText.push_back(StyledText(wxT("\r"),0,indentChar));
         }
         
         // Is this a real new line of comment - or did we insert a soft linebreak?
