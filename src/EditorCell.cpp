@@ -1864,7 +1864,6 @@ bool EditorCell::HandleSpecialKey(wxKeyEvent& event)
 
 bool EditorCell::HandleOrdinaryKey(wxKeyEvent& event)
 {
-  std::cerr<<"Char\n";
   if (event.ControlDown() && !event.AltDown())
     return false;
 
@@ -3312,7 +3311,7 @@ void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth
   lineWidth += width;
   
   if(
-    (lineWidth + m_currentPoint.x >= configuration->GetLineWidth()) &&
+    (lineWidth + (configuration->GetLabelWidth()+2)*configuration->GetDefaultFontSize()*configuration->GetScale()*configuration->GetZoomFactor() + MC_GROUP_LEFT_INDENT + 2 * MC_CELL_SKIP >= configuration->GetLineWidth()) &&
      (lastSpace!=NULL)&&(lastSpace->GetText()!="\r"))
   {
     int charWidth;
