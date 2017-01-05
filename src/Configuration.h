@@ -154,11 +154,21 @@ public:
   }
   const int GetDefaultFontSize() { return int(m_zoomFactor * double(m_defaultFontSize)); }
   const int GetMathFontSize() { return int(m_zoomFactor * double(m_mathFontSize)); }
-  const bool GetAutoWrap() { return m_autoWrap;}
-  void SetAutoWrap(bool autoWrap)
+  //! Do we want to have automatic line breaks for text cells?
+  const bool GetAutoWrap() { return m_autoWrap > 0;}
+  //! Do we want to have automatic line breaks for code cells?
+  const bool GetAutoWrapCode() { return m_autoWrap > 2;}
+  /*! Sets the auto wrap mode
+    \param autoWrap 
+     - 0: No automatic line breaks
+     - 1: Automatic line breaks only for text cells
+     - 2: Automatic line breaks for text and code cells.
+  */
+  void SetAutoWrap(int autoWrap)
     {
-      wxConfig::Get()->Write(wxT("autoWrap"),m_autoWrap = autoWrap);
+      wxConfig::Get()->Write(wxT("autoWrapMode"),m_autoWrap = autoWrap);
     }
+  //! Do we want automatic indentation?
   const bool GetAutoIndent() { return m_autoIndent;}
   void SetAutoIndent(bool autoIndent)
     {
@@ -219,7 +229,7 @@ private:
   //! How many digits of a number we show by default?
   int m_displayedDigits;
   //! Automatically wrap long lines?
-  bool m_autoWrap;
+  int m_autoWrap;
   //! Automatically indent long lines?
   bool m_autoIndent;
   //! Do we want to automatically close parenthesis?

@@ -3295,6 +3295,10 @@ wxArrayString EditorCell::StringToTokens(wxString string)
 
 void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth,const wxString &token,int charInCell,wxString &text,size_t &lastSpacePos,bool spaceIsIndentation)
 {
+  // If we don't want to autowrap code we don't do nothing here.
+  if(!Configuration::Get()->GetAutoWrapCode())
+    return;
+  
   int width,height;
   //  Does the line extend too much to the right to fit on the screen /
   //   // to be easy to read?

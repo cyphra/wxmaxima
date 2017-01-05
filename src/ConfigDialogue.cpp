@@ -363,7 +363,10 @@ void ConfigDialogue::SetProperties()
   m_insertAns->SetValue(Configuration::Get()->GetInsertAns());
   m_autoIndent->SetValue(Configuration::Get()->GetAutoIndent());
   m_cursorJump->SetValue(cursorJump);
-  m_autoWrap->SetValue(Configuration::Get()->GetAutoWrap());
+  int val = 0;
+  if(Configuration::Get()->GetAutoWrap()) val = 1;
+  if(Configuration::Get()->GetAutoWrapCode()) val = 2;
+  m_autoWrap->SetSelection(val);
   m_labelWidth->SetValue(labelWidth);
   m_undoLimit->SetValue(undoLimit);
   m_recentItems->SetValue(recentItems);
@@ -400,9 +403,8 @@ wxPanel* ConfigDialogue::CreateWorksheetPanel()
 {
   wxPanel *panel = new wxPanel(m_notebook, -1);
 
-  wxArrayString showLengths;
   wxArrayString autosubscripts;
-  wxFlexGridSizer* grid_sizer = new wxFlexGridSizer(8, 2, 5, 5);
+  wxFlexGridSizer* grid_sizer = new wxFlexGridSizer(9, 2, 5, 5);
   wxFlexGridSizer* vsizer = new wxFlexGridSizer(18,1,5,5);
   
   wxStaticText* pw = new wxStaticText(panel, -1, _("Default plot size for new maxima sessions:"));
@@ -424,12 +426,22 @@ wxPanel* ConfigDialogue::CreateWorksheetPanel()
 
   wxStaticText* sl = new wxStaticText(panel, -1, _("Show long expressions:"));
   grid_sizer->Add(sl, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+  wxArrayString showLengths;
   showLengths.Add(_("No"));
   showLengths.Add(_("If not very long"));
   showLengths.Add(_("If not extremely long"));
   showLengths.Add(_("Yes"));
   m_showLength = new wxChoice(panel,-1,wxDefaultPosition,wxDefaultSize,showLengths);
   grid_sizer->Add(m_showLength, 0, wxALL, 5);
+
+  wxStaticText* aw = new wxStaticText(panel, -1, _("Autowrap long lines:"));
+  grid_sizer->Add(aw, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+  wxArrayString autoWrap;
+  autoWrap.Add(_("No"));
+  autoWrap.Add(_("Text Only"));
+  autoWrap.Add(_("Text & Code"));
+  m_autoWrap = new wxChoice(panel,-1,wxDefaultPosition,wxDefaultSize,autoWrap);
+  grid_sizer->Add(m_autoWrap, 0, wxALL, 5);
 
   wxStaticText* as = new wxStaticText(panel, -1, _("Underscore converts to subscripts:"));
   grid_sizer->Add(as, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
@@ -478,9 +490,6 @@ wxPanel* ConfigDialogue::CreateWorksheetPanel()
 
   m_cursorJump = new wxCheckBox(panel, -1, _("New lines: Jump to text"));
   vsizer->Add(m_cursorJump, 0, wxALL, 5);
-
-  m_autoWrap = new wxCheckBox(panel, -1, _("Automatically wrap long text lines"));
-  vsizer->Add(m_autoWrap, 0, wxALL, 5);
 
   vsizer->AddGrowableRow(10);
   panel->SetSizer(vsizer);
@@ -850,7 +859,7 @@ void ConfigDialogue::WriteSettings()
   config->Write(wxT("insertAns"), m_insertAns->GetValue());
   Configuration::Get()->SetAutoIndent(m_autoIndent->GetValue());
   config->Write(wxT("cursorJump"), m_cursorJump->GetValue());
-  Configuration::Get()->SetAutoWrap(m_autoWrap->GetValue());
+  Configuration::Get()->SetAutoWrap(m_autoWrap->GetSelection());
   config->Write(wxT("labelWidth"), m_labelWidth->GetValue());
   config->Write(wxT("undoLimit"), m_undoLimit->GetValue());
   config->Write(wxT("recentItems"), m_recentItems->GetValue());
