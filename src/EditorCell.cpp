@@ -1520,7 +1520,6 @@ bool EditorCell::HandleSpecialKey(wxKeyEvent& event)
       m_text = m_text.SubString(0, m_positionOfCaret - 1) +
         wxT("\n") + indentString +
         m_text.SubString(m_positionOfCaret, m_text.Length());
-      StyleText();
       m_positionOfCaret++;
       if((indentChars > 0)&&(autoIndent))
       {
@@ -1865,6 +1864,7 @@ bool EditorCell::HandleSpecialKey(wxKeyEvent& event)
 
 bool EditorCell::HandleOrdinaryKey(wxKeyEvent& event)
 {
+  std::cerr<<"Char\n";
   if (event.ControlDown() && !event.AltDown())
     return false;
 
@@ -3298,6 +3298,11 @@ void EditorCell::HandleSoftLineBreaks_Code(StyledText *&lastSpace,int &lineWidth
   // If we don't want to autowrap code we don't do nothing here.
   if(!Configuration::Get()->GetAutoWrapCode())
     return;
+
+  // If this token contains spaces and is followed by a space we will do the line break
+  // in the next token. 
+  if((charInCell+1<text.Length())&&(token.StartsWith(wxT(" ")))&&(text[charInCell+1]=='\n'))
+    return;
   
   int width,height;
   //  Does the line extend too much to the right to fit on the screen /
@@ -3329,7 +3334,6 @@ void EditorCell::StyleText()
   // Remove all soft line breaks. They will be re-added in the right places
   // in the next step
   m_text.Replace(wxT("\r"),wxT(" "));
-
   // Do we need to style code or text?
   if(m_type == MC_TYPE_INPUT)
   {
@@ -3424,7 +3428,7 @@ void EditorCell::StyleText()
         lineWidth = 0;
         m_styledText.push_back(StyledText(token));
         spaceIsIndentation = true;
-        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos,spaceIsIndentation);
+//        HandleSoftLineBreaks_Code(lastSpace,lineWidth,token,pos,m_text,lastSpacePos,spaceIsIndentation);
         continue;
       }
 
